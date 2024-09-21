@@ -9,47 +9,46 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
-public class Main {
-    private static final JFrame jFrame = new JFrame("Test task");
-    private static final JPanel panelIntro = new JPanel();
-    private static final JPanel panelSort = new JPanel();
-    private static final JPanel panelButtons = new JPanel();
-    private static final JTextField textField = new JTextField();
-    private static final List<JButton> buttonList = new ArrayList<>();
-    private static final Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-    private static int[] numbers;
-    private static boolean isAsc = false;
-    private static final int BUTTONS_IN_COLUMN = 10;
-    private static final int WIDTH = 120;
-    private static final int HEIGHT = 30;
-    private static final int SPACE = 10;
-    private static final int MAX_NUMBER = 1000;
-    private static final int MAX_VALUE_TO_REBUILD = 30;
+public class Main extends JFrame {
+    private final JPanel panelIntro = new JPanel();
+    private final JPanel panelSort = new JPanel();
+    private final JPanel panelButtons = new JPanel();
+    private final JTextField textField = new JTextField();
+    private final List<JButton> buttonList = new ArrayList<>();
+    private final Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+    private int[] numbers;
+    private boolean isAsc = false;
+    private final int BUTTONS_IN_COLUMN = 10;
+    private final int WIDTH = 120;
+    private final int HEIGHT = 30;
+    private final int SPACE = 10;
+    private final int MAX_NUMBER = 1000;
+    private final int MAX_VALUE_TO_REBUILD = 30;
     private static int WAIT_TIME = 500;
-    private static final String SELECT_VALUE_SMALLER_30 =
+    private final String SELECT_VALUE_SMALLER_30 =
             String.format("Please select a value smaller or equal to %d.", MAX_VALUE_TO_REBUILD);
-    private static final String HOW_MANY_NUMBERS = "How many numbers to display?";
-    private static final String CHECK_ENTERED_VALUE_MESSAGE =
+    private final String HOW_MANY_NUMBERS = "How many numbers to display?";
+    private final String CHECK_ENTERED_VALUE_MESSAGE =
             String.format("The entered number must be between 1 and  %d.", MAX_NUMBER);
-    private static final String BUTTON_ENTER_TEXT = "Enter";
-    private static final String BUTTON_SORT_TEXT = "Sort";
-    private static final String BUTTON_SORT_RESET = "Reset";
-    private static final Font FONT = new Font("Arial", Font.BOLD, 15);
+    private final String BUTTON_ENTER_TEXT = "Enter";
+    private final String BUTTON_SORT_TEXT = "Sort";
+    private final String BUTTON_SORT_RESET = "Reset";
+    private final Font FONT = new Font("Arial", Font.BOLD, 15);
     private static Thread sortThread;
 
-    private static final ActionListener numberButtonListenerOnClick = e -> {
+    private final ActionListener numberButtonListenerOnClick = e -> {
         if ((sortThread == null || !sortThread.isAlive()) && e.getSource() instanceof JButton jButton) {
             int number = Integer.parseInt(jButton.getText());
 
             if (number > MAX_VALUE_TO_REBUILD) {
-                JOptionPane.showMessageDialog(jFrame, SELECT_VALUE_SMALLER_30);
+                JOptionPane.showMessageDialog(this, SELECT_VALUE_SMALLER_30);
             } else {
-                init();
+                initSort();
                 createNumbers(number);
                 createNumberButtons();
 
-                jFrame.revalidate();
-                jFrame.repaint();
+                revalidate();
+                repaint();
             }
         }
     };
@@ -66,19 +65,23 @@ public class Main {
             System.out.println("Invalid parameter");
             return;
         }
+        new Main().init();
+    }
 
+    private void init() {
         setupIntroPanel();
         setupSortPanel();
 
-        jFrame.setLayout(new CardLayout());
-        jFrame.add(panelIntro, "Intro");
-        jFrame.add(panelSort, "Sort");
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        jFrame.setVisible(true);
+        setTitle("Quick sort visualization");
+        setLayout(new CardLayout());
+        add(panelIntro, "Intro");
+        add(panelSort, "Sort");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setVisible(true);
     }
 
-    private static void setupIntroPanel() {
+    private void setupIntroPanel() {
         panelIntro.setLayout(null);
 
         JLabel label = new JLabel(HOW_MANY_NUMBERS);
@@ -97,7 +100,7 @@ public class Main {
         enterButton.addActionListener(e -> handleButtonClick());
     }
 
-    private static void setupSortPanel() {
+    private void setupSortPanel() {
         int width = (int) ((1.0f - (WIDTH + SPACE * 8.0f) / dimension.width) * dimension.width);
 
         panelButtons.setLayout(null);
@@ -125,35 +128,35 @@ public class Main {
                 + 2 * SPACE, WIDTH, HEIGHT), panelSort);
         resetButton.addActionListener(e -> {
             sortThread.interrupt();
-            ((CardLayout) jFrame.getContentPane().getLayout()).show(jFrame.getContentPane(), "Intro");
+            ((CardLayout) getContentPane().getLayout()).show(getContentPane(), "Intro");
         });
     }
 
-    private static void showError() {
-        JOptionPane.showMessageDialog(jFrame, CHECK_ENTERED_VALUE_MESSAGE);
+    private void showError() {
+        JOptionPane.showMessageDialog(this, CHECK_ENTERED_VALUE_MESSAGE);
         textField.requestFocus();
         textField.selectAll();
     }
 
-    private static void handleButtonClick() {
+    private void handleButtonClick() {
         try {
             int number = Integer.parseInt(textField.getText());
             if (number < 1 || number > MAX_NUMBER) {
                 throw new NumberFormatException();
             }
-            init();
+            initSort();
             createNumbers(number);
             createNumberButtons();
-            ((CardLayout) jFrame.getContentPane().getLayout()).show(jFrame.getContentPane(), "Sort");
+            ((CardLayout) getContentPane().getLayout()).show(getContentPane(), "Sort");
 
-            jFrame.revalidate();
-            jFrame.repaint();
+            revalidate();
+            repaint();
         } catch (NumberFormatException ex) {
             showError();
         }
     }
 
-    private static void createElement(JComponent component, Color background, Color foreground,
+    private void createElement(JComponent component, Color background, Color foreground,
                                        Rectangle rectangle, JComponent parent) {
         component.setBackground(background);
         component.setForeground(foreground);
@@ -162,12 +165,12 @@ public class Main {
         parent.add(component);
     }
 
-    private static void createNumbers(int n) {
+    private void createNumbers(int n) {
         numbers = new Random(n).ints(n, 1, MAX_NUMBER + 1).toArray();
         numbers[new Random().nextInt(n)] = new Random().nextInt(MAX_VALUE_TO_REBUILD) + 1;
     }
 
-    private static void createNumberButtons() {
+    private void createNumberButtons() {
         for (int i = 0; i < numbers.length; i++) {
             JButton numberButton = new JButton(String.valueOf(numbers[i]));
 
@@ -180,17 +183,17 @@ public class Main {
         panelButtons.setPreferredSize(new Dimension((WIDTH + SPACE) * (1 + numbers.length / BUTTONS_IN_COLUMN), 0));
     }
 
-    private static void reset() {
+    private void reset() {
         buttonList.forEach(b -> b.setBackground(Color.BLUE));
     }
 
-    private static void init() {
+    private void initSort() {
         buttonList.clear();
         panelButtons.removeAll();
         isAsc = false;
     }
 
-    private static void changeButtonVisual(int index, Color background, Border border) {
+    private void changeButtonVisual(int index, Color background, Border border) {
         JButton button = buttonList.get(index);
         if (background != null) {
             button.setBackground(background);
@@ -198,7 +201,7 @@ public class Main {
         button.setBorder(border);
     }
 
-    private static void visualChangeButton(int[] indexes, IterationType iterationType, Boolean color, boolean wait) {
+    private void visualChangeButton(int[] indexes, IterationType iterationType, Boolean color, boolean wait) {
         for (int index : indexes) {
             switch (iterationType) {
                 case PIVOT_ON -> changeButtonVisual(index, null, new LineBorder(Color.RED, 4));
@@ -209,7 +212,7 @@ public class Main {
                 case SWAP -> changeButtonVisual(index, Color.YELLOW, null);
             }
         }
-        jFrame.repaint();
+        repaint();
 
         try {
             if (wait) {
@@ -224,15 +227,15 @@ public class Main {
                 changeButtonVisual(index, Color.BLUE, null);
             }
         }
-        jFrame.repaint();
+        repaint();
     }
 
-    private static void changeButtons(int index1, int index2) {
+    private void changeButtons(int index1, int index2) {
         buttonList.get(index1).setText(String.valueOf(numbers[index1]));
         buttonList.get(index2).setText(String.valueOf(numbers[index2]));
     }
 
-    private static void quickSort(int low, int high) {
+    private void quickSort(int low, int high) {
         if (low >= high) {
             visualChangeButton(new int[]{high}, IterationType.SORTED, false, false);
             return;
