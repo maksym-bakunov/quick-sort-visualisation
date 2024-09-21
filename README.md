@@ -17,7 +17,7 @@ This small application visually displays the process of sorting **N** random num
  - The ability to specify the value of the visualization delay argument in milliseconds when starting the application.
  - User input of a value N in the range from **[1, 1000]** – the number of random numbers in the range **[1, 1000]**.  The entered value is validated.
  - N buttons are created, each displaying one of the N random numbers. Each column can contain a maximum of 10 buttons. If the buttons do not fit, dynamic horizontal scrolling is added.
- - When the **Sort** button is pressed, sorting begins. The first sort, after generating a new set of N random numbers, is performed in descending order. Subsequent presses of the Sort button reverse the sorting direction.
+ - When the **Sort** button is pressed, sorting begins. The first sort, after generating a new set of N random numbers, is performed in descending order. Subsequent presses of the **Sort** button reverse the sorting direction.
  - The visualization of the sorting process is carried out by changing the appearance of the buttons and their numerical values. The following button visualization markers are possible:
 
 <table>
@@ -47,8 +47,8 @@ This small application visually displays the process of sorting **N** random num
   </tr>
 </table>
 
- - The user can interrupt the sorting process by pressing the Reset button. In this case, a form for entering the value of N will be displayed to the user.
- - After N buttons are generated, the user can regenerate the set of random numbers and buttons by pressing a button with a value less than or equal to 30. If a button with a value greater than 30 is pressed, a warning appears: 'Please select a value smaller or equal to 30.' While the sorting process is running, pressing the buttons will not trigger the actions described above.
+ - The user can interrupt the sorting process by pressing the **Reset** button. In this case, a form for entering the value of N will be displayed to the user.
+ - After N buttons are generated, the user can regenerate the set of random numbers and buttons by pressing a button with a value less than or equal to 30. If a button with a value greater than 30 is pressed, a warning appears: *'Please select a value smaller or equal to 30.'* While the sorting process is running, pressing the buttons will not trigger the actions described above.
 
 ## Used technologies
 
