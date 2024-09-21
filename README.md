@@ -15,7 +15,7 @@ This small application visually displays the process of sorting **N** random num
 
 ## Functional
  - The ability to specify the value of the visualization delay argument in milliseconds when starting the application.
- - User input of a value N in the range f**[1, 1000]** – the number of random numbers in the range **[1, 1000]**.  The entered value is validated.
+ - User input of a value N in the range from **[1, 1000]** – the number of random numbers in the range **[1, 1000]**.  The entered value is validated.
  - N buttons are created, each displaying one of the N random numbers. Each column can contain a maximum of 10 buttons. If the buttons do not fit, dynamic horizontal scrolling is added.
  - When the **Sort** button is pressed, sorting begins. The first sort, after generating a new set of N random numbers, is performed in descending order. Subsequent presses of the Sort button reverse the sorting direction.
  - The visualization of the sorting process is carried out by changing the appearance of the buttons and their numerical values. The following button visualization markers are possible:
