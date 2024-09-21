@@ -44,7 +44,7 @@ By pressing the Sort button, the sorting begins, and you can see the visualizati
 By pressing the number button for a number that is less than or equal to 30, a new set of numbers and buttons will be formed.
 
 
-### Used technologies
+## Used technologies
 - Java 17
 - Maven 3.8.8
 - Swing
