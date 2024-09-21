@@ -3,7 +3,7 @@
 
 <p align="center">
   <a href="#description">Description</a> •
-  <a href="#functional">Functional</a>
+  <a href="#functional">Functional</a> •
   <a href="#used-technologies">Used technologies</a> •
   <a href="#how-to-use">How To Use</a> •
 </p>
