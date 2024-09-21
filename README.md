@@ -7,6 +7,8 @@
   <a href="#how-to-use">How To Use</a> •
 </p>
 
+![Screenshot of a comment on a GitHub issue showing an image, added in the Markdown, of an Octocat smiling and raising a tentacle.](screen.png)
+
 ## Description 
 After the user enters the number N **(1 ≤ N ≤ 1000)**, a set of random numbers from the range **[1, 1000]** is formed. Each random number is displayed as text on a button. These buttons are used for visualizing the sorting process. 
 Each iteration can be represented as:

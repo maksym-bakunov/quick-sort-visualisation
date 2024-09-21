@@ -11,18 +11,18 @@ import javax.swing.border.LineBorder;
 
 public class Main {
     private static final JFrame jFrame = new JFrame("Test task");
-    private static final JPanel jPanelIntro = new JPanel();
-    private static final JPanel jPanelSort = new JPanel();
-    private static final JPanel jPanelButtons = new JPanel();
-    private static final JTextField jTextField = new JTextField();
-    private static final List<JButton> jButtonList = new ArrayList<>();
+    private static final JPanel panelIntro = new JPanel();
+    private static final JPanel panelSort = new JPanel();
+    private static final JPanel panelButtons = new JPanel();
+    private static final JTextField textField = new JTextField();
+    private static final List<JButton> buttonList = new ArrayList<>();
     private static final Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     private static int[] numbers;
     private static boolean isAsc = false;
     private static final int BUTTONS_IN_COLUMN = 10;
-    private static final int BASE_WIDTH = 120;
-    private static final int BASE_HEIGHT = 30;
-    private static final int BASE_SPACE = 10;
+    private static final int WIDTH = 120;
+    private static final int HEIGHT = 30;
+    private static final int SPACE = 10;
     private static final int MAX_NUMBER = 1000;
     private static final int MAX_VALUE_TO_REBUILD = 30;
     private static int WAIT_TIME = 500;
@@ -34,14 +34,11 @@ public class Main {
     private static final String BUTTON_ENTER_TEXT = "Enter";
     private static final String BUTTON_SORT_TEXT = "Sort";
     private static final String BUTTON_SORT_RESET = "Reset";
-    private static final String FONT_NAME = "Arial";
+    private static final Font FONT = new Font("Arial", Font.BOLD, 15);
     private static Thread sortThread;
 
     private static final ActionListener numberButtonListenerOnClick = e -> {
-        if (sortThread.isAlive()) {
-            return;
-        }
-        if (e.getSource() instanceof JButton jButton) {
+        if ((sortThread == null || !sortThread.isAlive()) && e.getSource() instanceof JButton jButton) {
             int number = Integer.parseInt(jButton.getText());
 
             if (number > MAX_VALUE_TO_REBUILD) {
@@ -61,17 +58,12 @@ public class Main {
         try {
             if (args.length > 1) {
                 System.out.println("Too many parameters");
+                return;
+            } else if (args.length == 1 && (WAIT_TIME = Integer.parseInt(args[0])) < 0) {
                 throw new NumberFormatException();
-            } else if (args.length == 1) {
-                int argValue = Integer.parseInt(args[0]);
-                if (argValue >= 0) {
-                    WAIT_TIME = argValue;
-                } else {
-                    System.out.println("Invalid parameter");
-                    throw new NumberFormatException();
-                }
             }
         } catch (NumberFormatException e) {
+            System.out.println("Invalid parameter");
             return;
         }
 
@@ -79,48 +71,46 @@ public class Main {
         setupSortPanel();
 
         jFrame.setLayout(new CardLayout());
-        jFrame.add(jPanelIntro, "Intro");
-        jFrame.add(jPanelSort, "Sort");
+        jFrame.add(panelIntro, "Intro");
+        jFrame.add(panelSort, "Sort");
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         jFrame.setVisible(true);
     }
 
     private static void setupIntroPanel() {
-        jPanelIntro.setLayout(null);
+        panelIntro.setLayout(null);
 
         JLabel label = new JLabel(HOW_MANY_NUMBERS);
-        createElement(label,null, null,
-                new Rectangle(dimension.width / 2 - BASE_WIDTH, dimension.height / 2 - 2 * (BASE_HEIGHT + BASE_SPACE),
-                        BASE_WIDTH * 2, BASE_HEIGHT), new Font(FONT_NAME, Font.BOLD, 15), jPanelIntro);
+        createElement(label,null, null, new Rectangle(dimension.width / 2 - WIDTH,
+                dimension.height / 2 - 2 * (HEIGHT + SPACE), WIDTH * 2, HEIGHT), panelIntro);
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        jPanelIntro.add(label);
+        panelIntro.add(label);
 
-        jTextField.setBounds((dimension.width - BASE_WIDTH) / 2,
-                dimension.height / 2 - BASE_HEIGHT - BASE_SPACE, BASE_WIDTH, BASE_HEIGHT);
-        jTextField.setHorizontalAlignment(SwingConstants.RIGHT);
-        jPanelIntro.add(jTextField);
+        textField.setBounds((dimension.width - WIDTH) / 2,dimension.height / 2 - HEIGHT - SPACE, WIDTH, HEIGHT);
+        textField.setHorizontalAlignment(SwingConstants.RIGHT);
+        panelIntro.add(textField);
 
         JButton enterButton = new JButton(BUTTON_ENTER_TEXT);
-        createElement(enterButton, Color.BLUE, Color.WHITE, new Rectangle((dimension.width - BASE_WIDTH) / 2,
-                dimension.height / 2, BASE_WIDTH, BASE_HEIGHT), new Font(FONT_NAME, Font.BOLD, 14), jPanelIntro);
+        createElement(enterButton, Color.BLUE, Color.WHITE, new Rectangle((dimension.width - WIDTH) / 2,
+                dimension.height / 2, WIDTH, HEIGHT), panelIntro);
         enterButton.addActionListener(e -> handleButtonClick());
     }
 
     private static void setupSortPanel() {
-        int width = (int) ((1.0f - (BASE_WIDTH + BASE_SPACE * 8.0f) / dimension.width) * dimension.width);
+        int width = (int) ((1.0f - (WIDTH + SPACE * 8.0f) / dimension.width) * dimension.width);
 
-        jPanelButtons.setLayout(null);
-        JScrollPane scrollPane = new JScrollPane(jPanelButtons);
-        scrollPane.setBounds(BASE_SPACE, BASE_SPACE, width, Math.min(dimension.height,
-                (BASE_HEIGHT * 2 + BASE_SPACE) * (BUTTONS_IN_COLUMN + 1)));
+        panelButtons.setLayout(null);
+        JScrollPane scrollPane = new JScrollPane(panelButtons);
+        scrollPane.setBounds(SPACE, SPACE, width,
+                Math.min(dimension.height, (HEIGHT * 2 + SPACE) * (BUTTONS_IN_COLUMN)) + SPACE);
 
-        jPanelSort.setLayout(null);
-        jPanelSort.add(scrollPane);
+        panelSort.setLayout(null);
+        panelSort.add(scrollPane);
 
         JButton sortButton = new JButton(BUTTON_SORT_TEXT);
-        createElement(sortButton, Color.GREEN, Color.WHITE, new Rectangle(width + BASE_SPACE * 4, BASE_SPACE,
-                BASE_WIDTH, BASE_HEIGHT), new Font(FONT_NAME, Font.BOLD, 14), jPanelSort);
+        createElement(sortButton, Color.GREEN, Color.WHITE,
+                new Rectangle(width + SPACE * 4, SPACE, WIDTH, HEIGHT), panelSort);
         sortButton.addActionListener(e -> {
             reset();
             sortThread = new Thread(() -> {
@@ -131,23 +121,23 @@ public class Main {
         });
 
         JButton resetButton = new JButton(BUTTON_SORT_RESET);
+        createElement(resetButton, Color.GREEN, Color.WHITE, new Rectangle(width + SPACE * 4, HEIGHT
+                + 2 * SPACE, WIDTH, HEIGHT), panelSort);
         resetButton.addActionListener(e -> {
             sortThread.interrupt();
             ((CardLayout) jFrame.getContentPane().getLayout()).show(jFrame.getContentPane(), "Intro");
         });
-        createElement(resetButton, Color.GREEN, Color.WHITE, new Rectangle(width + BASE_SPACE * 4, BASE_HEIGHT
-                + 2 * BASE_SPACE, BASE_WIDTH, BASE_HEIGHT), new Font(FONT_NAME, Font.BOLD, 14), jPanelSort);
     }
 
     private static void showError() {
         JOptionPane.showMessageDialog(jFrame, CHECK_ENTERED_VALUE_MESSAGE);
-        jTextField.requestFocus();
-        jTextField.selectAll();
+        textField.requestFocus();
+        textField.selectAll();
     }
 
     private static void handleButtonClick() {
         try {
-            int number = Integer.parseInt(jTextField.getText());
+            int number = Integer.parseInt(textField.getText());
             if (number < 1 || number > MAX_NUMBER) {
                 throw new NumberFormatException();
             }
@@ -164,10 +154,10 @@ public class Main {
     }
 
     private static void createElement(JComponent component, Color background, Color foreground,
-                                       Rectangle rectangle, Font font, JComponent parent) {
+                                       Rectangle rectangle, JComponent parent) {
         component.setBackground(background);
         component.setForeground(foreground);
-        component.setFont(font);
+        component.setFont(FONT);
         component.setBounds(rectangle);
         parent.add(component);
     }
@@ -181,29 +171,27 @@ public class Main {
         for (int i = 0; i < numbers.length; i++) {
             JButton numberButton = new JButton(String.valueOf(numbers[i]));
 
-            int x = (BASE_WIDTH + BASE_SPACE) * (i / BUTTONS_IN_COLUMN) + BASE_SPACE;
-            int y = (BASE_HEIGHT * 2 + BASE_SPACE) * (i % BUTTONS_IN_COLUMN) + BASE_SPACE;
-            createElement(numberButton, Color.BLUE, Color.WHITE, new Rectangle(x, y, BASE_WIDTH, BASE_HEIGHT * 2),
-                    new Font(FONT_NAME, Font.BOLD, 14), jPanelButtons);
+            int x = (WIDTH + SPACE) * (i / BUTTONS_IN_COLUMN) + SPACE;
+            int y = (HEIGHT * 2 + SPACE) * (i % BUTTONS_IN_COLUMN) + SPACE;
+            createElement(numberButton, Color.BLUE, Color.WHITE, new Rectangle(x, y, WIDTH, HEIGHT * 2), panelButtons);
             numberButton.addActionListener(numberButtonListenerOnClick);
-            jButtonList.add(numberButton);
+            buttonList.add(numberButton);
         }
-        jPanelButtons.setPreferredSize(new Dimension((BASE_WIDTH + BASE_SPACE)
-                * (1 + numbers.length / BUTTONS_IN_COLUMN), 0));
+        panelButtons.setPreferredSize(new Dimension((WIDTH + SPACE) * (1 + numbers.length / BUTTONS_IN_COLUMN), 0));
     }
 
     private static void reset() {
-        jButtonList.forEach(b -> b.setBackground(Color.BLUE));
+        buttonList.forEach(b -> b.setBackground(Color.BLUE));
     }
 
     private static void init() {
-        jButtonList.clear();
-        jPanelButtons.removeAll();
+        buttonList.clear();
+        panelButtons.removeAll();
         isAsc = false;
     }
 
     private static void changeButtonVisual(int index, Color background, Border border) {
-        JButton button = jButtonList.get(index);
+        JButton button = buttonList.get(index);
         if (background != null) {
             button.setBackground(background);
         }
@@ -240,8 +228,8 @@ public class Main {
     }
 
     private static void changeButtons(int index1, int index2) {
-        jButtonList.get(index1).setText(String.valueOf(numbers[index1]));
-        jButtonList.get(index2).setText(String.valueOf(numbers[index2]));
+        buttonList.get(index1).setText(String.valueOf(numbers[index1]));
+        buttonList.get(index2).setText(String.valueOf(numbers[index2]));
     }
 
     private static void quickSort(int low, int high) {
@@ -307,11 +295,6 @@ public class Main {
     }
 
     private enum IterationType {
-        PIVOT_ON,
-        PIVOT_OFF,
-        LEFT_MOVE,
-        RIGHT_MOVE,
-        SWAP,
-        SORTED
+        PIVOT_ON, PIVOT_OFF, LEFT_MOVE, RIGHT_MOVE, SWAP, SORTED
     }
 }
