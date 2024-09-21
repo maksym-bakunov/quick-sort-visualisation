@@ -8,13 +8,13 @@
 </p>
 
 ## Description 
-After the user enters the number N <font color="gray">(1 ≤ N ≤ 1000)</font>, a set of random numbers from the range <font color="gray">[1, 1000]</font> is formed. Each random number is displayed as text on a button. These buttons are used for visualizing the sorting process. 
+After the user enters the number N **(1 ≤ N ≤ 1000)**, a set of random numbers from the range **[1, 1000]** is formed. Each random number is displayed as text on a button. These buttons are used for visualizing the sorting process. 
 Each iteration can be represented as:
 
 <table>
   <tr>
-    <th>Изображение</th>
-    <th>Описание</th>
+    <th>Marker</th>
+    <th>Description</th>
   </tr>
   <tr>
     <td><img src="pivot.png" alt="Image 1" width="100"></td>
@@ -44,14 +44,14 @@ By pressing the Sort button, the sorting begins, and you can see the visualizati
 By pressing the number button for a number that is less than or equal to 30, a new set of numbers and buttons will be formed.
 
 
-### Used technology
+### Used technologies
 - Java 17
-- Maven
+- Maven 3.8.8
 - Swing
 
 ## How to use
 
 - Copy the project.
 - The project can be launched either without parameters or with a single parameter:  
-*<font color="gray"> java -jar qsv.jar [arg] </font>*, where arg</b> is delay (in ms.) for visualisation. The default value of the delay is 500 ms.   
+**java -jar qsv.jar [arg]**, where arg</b> is delay (in ms.) for visualisation. The default value of the delay is 500 ms.   
 - Enjoy!
