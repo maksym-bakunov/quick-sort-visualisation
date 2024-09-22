@@ -115,6 +115,9 @@ public class Main extends JFrame {
         createElement(sortButton, Color.GREEN, Color.WHITE,
                 new Rectangle(width + SPACE * 4, SPACE, WIDTH, HEIGHT), panelSort);
         sortButton.addActionListener(e -> {
+            if (sortThread != null && sortThread.isAlive()) {
+                return;
+            }
             reset();
             sortThread = new Thread(() -> {
                 quickSort(0, numbers.length - 1);
