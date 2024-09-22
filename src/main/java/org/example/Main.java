@@ -10,6 +10,23 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 public class Main extends JFrame {
+    private static final int BUTTONS_IN_COLUMN = 10;
+    private static final int WIDTH = 120;
+    private static final int HEIGHT = 30;
+    private static final int SPACE = 10;
+    private static final int MAX_NUMBER = 1000;
+    private static final int MAX_VALUE_TO_REBUILD = 30;
+    private static int WAIT_TIME = 500;
+    private static final String SELECT_VALUE_SMALLER_30 =
+            String.format("Please select a value smaller or equal to %d.", MAX_VALUE_TO_REBUILD);
+    private static final String HOW_MANY_NUMBERS = "How many numbers to display?";
+    private static final String CHECK_ENTERED_VALUE_MESSAGE =
+            String.format("The entered number must be between 1 and  %d.", MAX_NUMBER);
+    private static final String BUTTON_ENTER_TEXT = "Enter";
+    private static final String BUTTON_SORT_TEXT = "Sort";
+    private static final String BUTTON_SORT_RESET = "Reset";
+    private static final Font FONT = new Font("Arial", Font.BOLD, 15);
+    private static Thread sortThread;
     private final JPanel panelIntro = new JPanel();
     private final JPanel panelSort = new JPanel();
     private final JPanel panelButtons = new JPanel();
@@ -18,23 +35,6 @@ public class Main extends JFrame {
     private final Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     private int[] numbers;
     private boolean isAsc = false;
-    private final int BUTTONS_IN_COLUMN = 10;
-    private final int WIDTH = 120;
-    private final int HEIGHT = 30;
-    private final int SPACE = 10;
-    private final int MAX_NUMBER = 1000;
-    private final int MAX_VALUE_TO_REBUILD = 30;
-    private static int WAIT_TIME = 500;
-    private final String SELECT_VALUE_SMALLER_30 =
-            String.format("Please select a value smaller or equal to %d.", MAX_VALUE_TO_REBUILD);
-    private final String HOW_MANY_NUMBERS = "How many numbers to display?";
-    private final String CHECK_ENTERED_VALUE_MESSAGE =
-            String.format("The entered number must be between 1 and  %d.", MAX_NUMBER);
-    private final String BUTTON_ENTER_TEXT = "Enter";
-    private final String BUTTON_SORT_TEXT = "Sort";
-    private final String BUTTON_SORT_RESET = "Reset";
-    private final Font FONT = new Font("Arial", Font.BOLD, 15);
-    private static Thread sortThread;
 
     private final ActionListener numberButtonListenerOnClick = e -> {
         if ((sortThread == null || !sortThread.isAlive()) && e.getSource() instanceof JButton jButton) {
@@ -127,7 +127,9 @@ public class Main extends JFrame {
         createElement(resetButton, Color.GREEN, Color.WHITE, new Rectangle(width + SPACE * 4, HEIGHT
                 + 2 * SPACE, WIDTH, HEIGHT), panelSort);
         resetButton.addActionListener(e -> {
-            sortThread.interrupt();
+            if (sortThread != null) {
+                sortThread.interrupt();
+            }
             ((CardLayout) getContentPane().getLayout()).show(getContentPane(), "Intro");
         });
     }
@@ -202,32 +204,36 @@ public class Main extends JFrame {
     }
 
     private void visualChangeButton(int[] indexes, IterationType iterationType, Boolean color, boolean wait) {
-        for (int index : indexes) {
-            switch (iterationType) {
-                case PIVOT_ON -> changeButtonVisual(index, null, new LineBorder(Color.RED, 4));
-                case PIVOT_OFF -> changeButtonVisual(index, null, null);
-                case LEFT_MOVE -> changeButtonVisual(index, Color.MAGENTA, null);
-                case RIGHT_MOVE -> changeButtonVisual(index, Color.PINK, null);
-                case SORTED -> changeButtonVisual(index, Color.GREEN, null);
-                case SWAP -> changeButtonVisual(index, Color.YELLOW, null);
-            }
-        }
-        repaint();
-
         try {
+            if (Thread.currentThread().isInterrupted()) {
+                throw new RuntimeException();
+            }
+
+            for (int index : indexes) {
+                switch (iterationType) {
+                    case PIVOT_ON -> changeButtonVisual(index, null, new LineBorder(Color.RED, 4));
+                    case PIVOT_OFF -> changeButtonVisual(index, null, null);
+                    case LEFT_MOVE -> changeButtonVisual(index, Color.MAGENTA, null);
+                    case RIGHT_MOVE -> changeButtonVisual(index, Color.PINK, null);
+                    case SORTED -> changeButtonVisual(index, Color.GREEN, null);
+                    case SWAP -> changeButtonVisual(index, Color.YELLOW, null);
+                }
+            }
+            repaint();
+
             if (wait) {
                 Thread.sleep(WAIT_TIME);
             }
+
+            if (color) {
+                for (int index : indexes) {
+                    changeButtonVisual(index, Color.BLUE, null);
+                }
+            }
+            repaint();
         } catch (InterruptedException e) {
             throw new RuntimeException("Sorting was interrupted...");
         }
-
-        if (color) {
-            for (int index : indexes) {
-                changeButtonVisual(index, Color.BLUE, null);
-            }
-        }
-        repaint();
     }
 
     private void changeButtons(int index1, int index2) {
@@ -249,10 +255,6 @@ public class Main extends JFrame {
         visualChangeButton(new int[]{indexPivot}, IterationType.PIVOT_ON, false, true);
 
         while (i <= j) {
-            if (Thread.currentThread().isInterrupted()) {
-                throw new RuntimeException();
-            }
-
             while ((isAsc && numbers[i] < pivot) || (!isAsc && numbers[i] > pivot)) {
                 visualChangeButton(new int[]{i++}, IterationType.LEFT_MOVE, true, true);
             }
